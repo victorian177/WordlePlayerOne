@@ -13,7 +13,9 @@ The comparison returns
 Based on this output queries are constructed to narrow down the database til the actual word is correctly picked(i.e. comparison returns a 'green' for all five positions).
 
 The 'green' subquery simply compares all words in the database to any word that matches the pattern.
+<br>
 The 'yellow' subquery matches the words that have the letters in positions other than the previously guessed positions.
+<br>
 The 'black' subquery matches removes all words that possess any occurence of the letters.
 
 
