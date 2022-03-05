@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 import psycopg
-import sqlalchemy
 import urllib.parse as up
 
 load_dotenv()

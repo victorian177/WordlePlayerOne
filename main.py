@@ -3,11 +3,11 @@ from word_checkr import word_comparison
 import os
 import psycopg
 import random
-import sqlalchemy
 import urllib.parse as up
 
 load_dotenv()
 
+# Letters returned as 'black' are set to an array of all possibilities of that letter
 def black_letter_words(lttr_lst: list):
     blck_wrd_lst = []
     for i in lttr_lst:
@@ -20,6 +20,8 @@ def black_letter_words(lttr_lst: list):
     
     return blck_wrd_lst
 
+# Letters returned as 'yellow' are set to an array of all possibilities of that letter 
+# except outcomes in which the position of the letter is the same
 def yellow_letter_words(yllw_lttrs):
     yllw_wrd_lst = []
     for key, value in yllw_lttrs.items():
@@ -34,9 +36,8 @@ def yellow_letter_words(yllw_lttrs):
     yllw_wrd_lst = [f"'{i}'" for i in yllw_wrd_lst]
 
     return yllw_wrd_lst
-        
-    
 
+# Connect to URL for Elephant DB  
 up.uses_netloc.append("postgres")
 url = up.urlparse(os.environ["ELPHNT_DB_URL"])
 
@@ -46,14 +47,13 @@ DB_PASS = url.password
 DB_PORT = os.environ["DB_PORT"]
 DB_NAME = url.path[1:]
 
+# Library to connect to PostgreSQL 
 with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PASS) as conn:
     with conn.cursor() as cur:
 
-        '''Word finder'''
-
-        green_letters = ['_', '_', '_', '_', '_']
-        yellow_letters = {}
-        black_letters = []
+        green_letters = ['_', '_', '_', '_', '_'] # Green letters initially set to dashes
+        yellow_letters = {} # Yellow letters set as dictionary to store letter and positions they occupy
+        black_letters = [] # Black letters put in a list
 
         # First guess
         cur.execute('''
@@ -72,6 +72,7 @@ with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PAS
         guess_word = cur.fetchall()[0][0]
         comparison = word_comparison(guess_word)
 
+        # Until comparison returns all green letters, keep guessing
         while comparison.count('green') < 5:
             print(guess_word)
             for i in range(len(guess_word)):
@@ -82,10 +83,12 @@ with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PAS
                 else:
                     black_letters.append(guess_word[i])
 
+            # Content of green, yellow, and black letters determine the amount of nesting to occur in query
             nested_query = 'wordle'
             
             green_word = ''.join(green_letters)
             if green_letters != '_____':
+                print(green_letters)
                 nested_query = f'''
                     (SELECT *
                     FROM {nested_query}
@@ -93,6 +96,7 @@ with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PAS
                 '''
 
             if len(yellow_letters) != 0:
+                print(yellow_letters)
                 yellow_words = yellow_letter_words(yellow_letters)
                 yellow_words = ', '.join(yellow_words)
                 nested_query = f'''
@@ -102,6 +106,7 @@ with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PAS
                 '''
 
             if len(black_letters) != 0:
+                print(black_letters)
                 black_words = black_letter_words(black_letters)
                 black_words = ', '.join(black_words)
             else:
@@ -115,9 +120,14 @@ with psycopg.connect(dbname=DB_NAME, user=DB_USER, host=DB_HOST, password=DB_PAS
 
             cur.execute(query)
             db_result = cur.fetchall()
-            
-            guess_id = random.randint(1, len(db_result)-1)
-            guess_word = db_result[guess_id][0]
+
+            print(f'db_result: {len(db_result)}')
+            result_count = len(db_result)-1
+            if result_count != 0:
+                guess_id = random.randint(0, result_count)
+                guess_word = db_result[guess_id][0]
+            else:
+                guess_word = db_result[result_count][0]
 
             comparison = word_comparison(guess_word)
 

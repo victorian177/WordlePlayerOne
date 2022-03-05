@@ -1,0 +1,1 @@
+# Bot to control the interaction with the Wordle site
