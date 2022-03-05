@@ -10,7 +10,7 @@ The comparison returns
 'yellow': if the letter is part of the actual word but not in it correct position
 'black': if the letter is not part of the actual word.
 
-Based on this output queries are constructed to narrow down the database til the actual word is correctly picked(i.e. comparison returns a 'green' for all five positions).
+Based on this output queries are constructed to narrow down the database till the actual word is correctly picked(i.e. comparison returns a 'green' for all five positions).
 
 The 'green' subquery simply compares all words in the database to any word that matches the pattern.
 <br>
