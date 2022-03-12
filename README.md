@@ -1,7 +1,7 @@
 ## WordlePlayerOne
 A bot that plays Wordle.
 
-The bot plays Wordle using a PostgreSQL database containing 8939 5-letter words and uses queries to narrow down the database to hopefully guess the word.
+The bot plays Wordle using an online PostgreSQL-as-a-Service database([ElephantSQL](https://www.elephantsql.com/)) containing 8939 5-letter words and uses queries to narrow down the database to hopefully guess the word.
 <br>
 The first try involves picking a word at random from the database. This word is compared to the actual word being guessed.
 <br>
@@ -19,7 +19,7 @@ The 'yellow' subquery matches the words that have the letters in positions other
 The 'black' subquery matches removes all words that possess any occurence of the letters.
 
 ##### database.py
-Creates and maintains the PostgreSQL online database -> ElephantDB to stores the library of possible words.
+Creates and maintains the PostgreSQL online database -> [ElephantSQL](https://www.elephantsql.com/) to stores the library of possible words.
 
 ##### query.py
 Class that generates queries for the database to guess from a possible words depending on the black, green, and yellow letters that have been generated.
