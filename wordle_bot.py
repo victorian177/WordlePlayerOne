@@ -1,8 +1,8 @@
 from seleniumbase import BaseCase
 from query import WordleQuery
 from word_checkr import word_comparison
-import pytest
 import time
+
 class WordleBot(BaseCase):
     def test_wordle(self):
         query = WordleQuery()
@@ -12,6 +12,8 @@ class WordleBot(BaseCase):
         time.sleep(2)
         kybrd = "game-app::shadow game-theme-manager div#game game-keyboard::shadow div#keyboard div.row "
 
+
+        # First guess
         query.first_guess()
         for i in query.word:
             self.click(kybrd + f'button[data-key="{i}"]')
@@ -20,6 +22,7 @@ class WordleBot(BaseCase):
         self.click(kybrd + f'button[data-key="↵"]')
         time.sleep(5)
 
+        # Subsequent guesses: wordle only allows for 6 guesses
         for i in range(5):
             row = f'game-app::shadow game-row[letters="{query.word}"]::shadow '
             tile = row + "game-tile:nth-of-type(%s)"

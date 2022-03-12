@@ -63,7 +63,8 @@ class WordleQuery:
                 # Content of green, yellow, and black letters determine the amount of nesting to occur in query
                     nested_query = 'wordle'
                     
-                    green_word = ''.join(self.green_letters)
+                    # Subquery checking for words that look like those specified in the green letters
+                    green_word = ''.join(self.green_letters) 
                     if green_word != '_____':
                         nested_query = f'''
                             (SELECT *
@@ -71,6 +72,7 @@ class WordleQuery:
                             WHERE word LIKE '{green_word}') AS green_subq
                         '''
 
+                    # Subquery checking for words that look like those specified in the yellows letters
                     if len(self.yellow_letters) != 0:
                         yellow_words = self.yellow_letter_words()
                         yellow_words = ', '.join(yellow_words)
@@ -79,12 +81,13 @@ class WordleQuery:
                             FROM {nested_query}
                             WHERE word NOT LIKE ALL(ARRAY[{yellow_words}])) AS yllw_subq
                         '''
-
+                    
+                    # Subquery checking for words that don't look like those specified in the blacks letters
                     if len(self.black_letters) != 0:
                         black_words = self.black_letter_words()
                         black_words = ', '.join(black_words)
                     else:
-                        black_words = '12345'
+                        black_words = '12345' # Should there be a comparison that possesses no black letters
 
                     query = f'''
                         SELECT word
@@ -107,7 +110,7 @@ class WordleQuery:
             conn.commit()
 
 
-    def yellow_letter_words(self):
+    def yellow_letter_words(self): # return all combinations of yellow letters that can occur aside those in the position specified
         yllw_wrd_lst = []
         for key, value in self.yellow_letters.items():
             yllw_wrd = ''
@@ -122,7 +125,7 @@ class WordleQuery:
 
         return yllw_wrd_lst
 
-    def black_letter_words(self):
+    def black_letter_words(self): # returns lists of all possible combinations of words that contain letters labelled as black letters
         blck_wrd_lst = []
         for i in self.black_letters:
             if not(i in self.green_letters or i in list(self.yellow_letters.keys())):

@@ -26,14 +26,14 @@ with psycopg.connect(dbname=DB_NAME,
     with conn.cursor() as cur:
         '''Database creation and management'''
 
-        # cur.execute('''
-        #     CREATE TABLE IF NOT EXISTS wordle (
-        #         id serial PRIMARY KEY,
-        #         word VARCHAR(5));
-        #     ''')
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS wordle (
+                id serial PRIMARY KEY,
+                word VARCHAR(5));
+            ''')
 
-        # for indx in range(len(word_list)):
-        #     cur.execute('''
-        #         INSERT INTO wordle (id, word) VALUES (%s, %s);
-        #     ''', (indx + 1, word_list[indx]))
-        #     print(f"ENTERED {indx}")
+        for indx in range(len(word_list)):
+            cur.execute('''
+                INSERT INTO wordle (id, word) VALUES (%s, %s);
+            ''', (indx + 1, word_list[indx]))
+            print(f"ENTERED {indx}")

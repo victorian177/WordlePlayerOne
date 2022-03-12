@@ -1,5 +1,4 @@
-# Test to see if comparison works
-# Guess is compared to actual word and colour code for each letter is outputted
+# Guess is compared to results from Wordle site and colour codes for each letter
 
 def word_comparison(result_from_guess):  
     WORDLE_LENGTH = 5
